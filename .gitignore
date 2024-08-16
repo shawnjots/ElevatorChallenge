@@ -1,0 +1,5 @@
+#Add all bin folders to .gitignore for the project
+**/bin/
+**/obj/
+**/.vs/
+.vs/
