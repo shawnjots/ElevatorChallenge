@@ -7,8 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ElevatorChallenge.DTOs\ElevatorChallenge.DTOs.csproj" />
     <ProjectReference Include="..\ElevatorChallenge.Events\ElevatorChallenge.Events.csproj" />
+    <ProjectReference Include="..\ElevatorChallenge.Models\ElevatorChallenge.Models.csproj" />
   </ItemGroup>
 
 </Project>

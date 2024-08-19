@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ElevatorChallenge.DTOs.Floor
 {
-	public record Floor
+	public record FloorDTO
 	{
 		public int FloorNumber { get; set; }
 		public List<PassengerDTO>? PassengerQueue { get; set; }
