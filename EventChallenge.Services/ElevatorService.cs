@@ -7,6 +7,7 @@ using EventChallenge.Services.Interfaces;
 using System.Collections.Concurrent;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using static ElevatorChallenge.Models.Elevator;
 
 namespace EventChallenge.Services
 {
@@ -33,7 +34,11 @@ namespace EventChallenge.Services
 
 			PassengerEvents.Subscribe(async passengerArgs =>
 			{
-				
+				if (passengerArgs.PassengerStatus == PassengerEventArgs.Status.AddedToQueue)
+				{
+					_requestCount.Enqueue(passengerArgs.CurrentFloor); 
+					await ManageElevators();
+				}
 			});
 		}
 
@@ -64,6 +69,38 @@ namespace EventChallenge.Services
 			}
 		}
 
-		
+		private async Task ManageElevators()
+		{
+			foreach (var elevator in _elevators.Where(e => e.CurrentStatus == Elevator.Status.Stationary))
+			{
+
+				await ExecuteNextStep(elevator);
+			}
+
+		}
+
+		private async Task ExecuteNextStep(Elevator elevator)
+		{
+			throw new NotImplementedException();
+		}
+
+		private List<int> GetFloorsWithWaitingPassengers(Elevator elevator)
+		{
+			var query = _floors.Where(kvp => kvp.Value.ScheduledPassengers.Any());
+
+			if (elevator.CurrentDirection == Direction.Up)
+			{
+				query = query.Where(kvp => kvp.Key > elevator.CurrentFloor);
+			}
+			else if (elevator.CurrentDirection == Direction.Down)
+			{
+				query = query.Where(kvp => kvp.Key < elevator.CurrentFloor);
+			}
+
+			
+			return query.Select(kvp => kvp.Key).ToList();
+		}
+
+
 	}
 }
