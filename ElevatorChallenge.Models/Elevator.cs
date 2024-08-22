@@ -8,7 +8,7 @@
 		private static int _id = 1;
 		public int MaximumCapacity { get; private set; }
 		public int CurrentFloor { get; set; }
-		public List<Passenger>? Passengers { get; private set; }
+		public List<Passenger> Passengers { get; private set; }
 		public Direction CurrentDirection { get; set; }
 		public Status CurrentStatus { get; set; }
 		public bool IsAvailable => CurrentStatus == Status.Stationary && CurrentDirection == Direction.None;
@@ -28,12 +28,12 @@
 			Passengers = new List<Passenger>();
 		}
 
-		public void loadPassenger(Passenger passenger)
+		public void LoadPassenger(Passenger passenger)
 		{
 			Passengers?.Add(passenger);
 		}
 
-		public void unloadPassenger(Passenger passenger)
+		public void UnloadPassenger(Passenger passenger)
 		{
 			if (Passengers?.Contains(passenger) ?? false)
 			{
