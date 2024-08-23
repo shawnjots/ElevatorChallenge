@@ -1,18 +1,14 @@
 ﻿using AutoMapper;
 using ElevatorChallenge.Models;
-using ElevatorChallenge.DTOs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ElevatorChallenge.DTOs.Elevator;
 using ElevatorChallenge.DTOs.Passenger;
 using ElevatorChallenge.DTOs.Floor;
+using EventChallenge.Services.Interfaces;
+using IMapper = EventChallenge.Services.Interfaces.IMapper;
 
 namespace EventChallenge.Services.Mappers
 {
-	public class Mapper : IMapper
+    public class Mapper : IMapper
 	{
 		private readonly AutoMapper.IMapper _mapper;
 

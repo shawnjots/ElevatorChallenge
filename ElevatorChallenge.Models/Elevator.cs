@@ -1,6 +1,9 @@
-﻿namespace ElevatorChallenge.Models
+﻿using ElevatorChallenge.Models;
+using ElevatorChallenge.Util;
+
+namespace ElevatorChallenge.Models
 {
-	public class Elevator
+    public class Elevator
 	{
 		#region FIELDS
 
@@ -55,7 +58,7 @@
 
 			CurrentStatus = Status.Moving;
 			CurrentDirection = CurrentFloor < floor ? Direction.Up : Direction.Down;
-			CurrentFloor = Math.Clamp(floor, 1, 23);
+			CurrentFloor = Math.Clamp(floor, Constant.MinFloor, Constant.MaxFloor);
 		}
 
 		#endregion

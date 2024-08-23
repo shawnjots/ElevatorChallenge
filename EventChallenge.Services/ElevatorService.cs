@@ -1,9 +1,10 @@
-﻿using AutoMapper;
-using ElevatorChallenge.DTOs.Passenger;
+﻿using ElevatorChallenge.DTOs.Passenger;
 using ElevatorChallenge.Events;
 using ElevatorChallenge.Models;
 using ElevatorChallenge.Util;
+using ElevatorChallenge.Util.Interfaces;
 using EventChallenge.Services.Interfaces;
+using EventChallenge.Services.Mappers;
 using System.Collections.Concurrent;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
