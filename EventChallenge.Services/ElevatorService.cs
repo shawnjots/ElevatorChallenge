@@ -24,7 +24,11 @@ namespace EventChallenge.Services
 		private readonly Subject<ElevatorEventArgs> _elevatorStatusSubject = new();
 		public IObservable<ElevatorEventArgs> ElevatorEvents => _elevatorStatusSubject.AsObservable();
 
-
+		/// <summary>
+        /// Initializes a new instance of the ElevatorService class.
+        /// </summary>
+        /// <param name="mapper">The mapper instance to map objects.</param>
+        /// <returns>void</returns>	
 		public ElevatorService(IMapper mapper)
 		{
 			_requestCount = new ConcurrentQueue<int>();
@@ -46,6 +50,13 @@ namespace EventChallenge.Services
 			});
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the ElevatorService class.
+		/// </summary>
+		/// <param name="mapper">The mapper instance to map objects.</param>
+		/// <param name="elevators">The list of elevators to be used.</param>
+		/// <param name="floors">The list of floors to be used.</param>
+		/// <returns>void</returns>
 		public void QueuePassenger(int floor, PassengerDTO passengerDTO)
 		{
 			lock (_lock)
@@ -68,6 +79,10 @@ namespace EventChallenge.Services
             }
 		}
 
+		/// <summary>
+        /// Initializes all floors within the range defined by constants.
+        /// </summary>
+        /// <returns>void</returns>
 		private void EnableFloors()
 		{
 			for (int i = Constant.MinFloor; i <= Constant.MaxFloor; i++)
@@ -76,6 +91,10 @@ namespace EventChallenge.Services
 			}
 		}
 
+		/// <summary>
+        /// Initializes all elevators within the range defined by constants.
+        /// </summary>
+        /// <returns>void</returns>
 		private void EnableElevators()
 		{
 			for (int i = 1; i <= Constant.MaxElevators; i++)
@@ -84,6 +103,10 @@ namespace EventChallenge.Services
 			}
 		}
 
+		/// <summary>
+        /// Manages the elevators to handle passenger requests.
+        /// </summary>
+        /// <returns>Task</returns>
 		private async Task ManageElevators()
 		{
 			foreach (var elevator in _elevators.Where(e => e.CurrentStatus == Elevator.Status.Stationary))
@@ -94,6 +117,11 @@ namespace EventChallenge.Services
 
 		}
 
+		/// <summary>
+        /// Executes the next step for a given elevator.
+        /// </summary>
+        /// <param name="elevator">The elevator to manage.</param>
+        /// <returns>Task</returns>
 		private async Task ExecuteNextStep(Elevator elevator)
 		{
 			
@@ -106,6 +134,11 @@ namespace EventChallenge.Services
 			await SendElevator(elevator, bestFloor);
 		}
 
+		/// <summary>
+        /// Gets the list of floors with waiting passengers for a given elevator.
+        /// </summary>
+        /// <param name="elevator">The elevator to check.</param>
+        /// <returns>List of floor numbers</returns>
 		private List<int> GetFloorsWithWaitingPassengers(Elevator elevator)
 		{
 			var query = _floors.Where(kvp => kvp.Value.ScheduledPassengers.Any());
@@ -123,6 +156,12 @@ namespace EventChallenge.Services
 			return query.Select(kvp => kvp.Key).ToList();
 		}
 
+		/// <summary>
+        /// Finds the next best floor for a given elevator to move to.
+        /// </summary>
+        /// <param name="elevator">The elevator to manage.</param>
+        /// <param name="floorsWithWaiting">List of floors with waiting passengers.</param>
+        /// <returns>Best floor number</returns>
 		private int FindNextBestFloor(Elevator elevator, List<int> floorsWithWaiting)
 		{
 			if (floorsWithWaiting.Count == 0)
@@ -144,6 +183,12 @@ namespace EventChallenge.Services
 			return bestFloor;
 		}
 
+		/// <summary>
+        /// Calculates the attractiveness score for a given floor.
+        /// </summary>
+        /// <param name="elevator">The elevator to manage.</param>
+        /// <param name="floor">The floor number to evaluate.</param>
+        /// <returns>Attractiveness score</returns>
 		private int CalculateAttractivenessScore(Elevator elevator, int floor)
 		{
 			int baseScore = 20;
@@ -158,6 +203,12 @@ namespace EventChallenge.Services
 			return adjustedScore;
 		}
 
+		/// <summary>
+        /// Calculates the density bonus for a given floor.
+        /// </summary>
+        /// <param name="floor">The floor number to evaluate.</param>
+        /// <param name="elevator">The elevator to manage.</param>
+        /// <returns>Density bonus score</returns>
 		private int CalculateDensityBonus(int floor, Elevator elevator)
 		{
 			int numberOfWaitingPassengers = _floors[floor].ScheduledPassengers.Count;
@@ -166,6 +217,12 @@ namespace EventChallenge.Services
 			return adjustedBonus;
 		}
 
+		/// <summary>
+        /// Calculates the destination bonus for a given floor.
+        /// </summary>
+        /// <param name="elevator">The elevator to manage.</param>
+        /// <param name="floor">The floor number to evaluate.</param>
+        /// <returns>Destination bonus score</returns>
 		private int CalculateDestinationBonus(Elevator elevator, int floor)
 		{
 			if (elevator.Passengers.Any(p => p.DestinationFloor == floor))
@@ -188,6 +245,12 @@ namespace EventChallenge.Services
 			return proximityBonus;
 		}
 
+		/// <summary>
+        /// Calculates the wait severity score for a given floor.
+        /// </summary>
+        /// <param name="elevator">The elevator to manage.</param>
+        /// <param name="floor">The floor number to evaluate.</param>
+        /// <returns>Wait severity score</returns>
 		private int CalculateWaitSeverityScore(Elevator elevator, int floor)
 		{
 			double avgWaitTime = _floors[floor].ScheduledPassengers.Average(p => (DateTime.Now - p.RequestedAt).TotalSeconds);
@@ -198,6 +261,11 @@ namespace EventChallenge.Services
 			return severityScore;
 		}
 
+		/// <summary>
+        /// Gets the dynamic wait threshold for a given elevator.
+        /// </summary>
+        /// <param name="elevator">The elevator to manage.</param>
+        /// <returns>Dynamic wait threshold</returns>
 		private double GetDynamicWaitThreshold(Elevator elevator)
 		{
 			double loadFactor = (double)elevator.Passengers.Count / elevator.MaximumCapacity;
@@ -205,6 +273,12 @@ namespace EventChallenge.Services
 			return adjustedThreshold;
 		}
 
+		/// <summary>
+        /// Gets the distance factor for a given floor.
+        /// </summary>
+        /// <param name="elevator">The elevator to manage.</param>
+        /// <param name="floor">The floor number to evaluate.</param>
+        /// <returns>Distance factor</returns>
 		private double GetDistanceFactor(Elevator elevator, int floor)
 		{
 			double distance = Math.Abs(elevator.CurrentFloor - floor);
@@ -214,6 +288,15 @@ namespace EventChallenge.Services
 			return distanceFactor;
 		}
 
+		/// <summary>
+        /// Gets the competition factor for a given floor.
+        /// </summary>
+        /// <param name="floor">The floor number to evaluate.</param>
+        /// <returns>Competition factor</returns>/// <summary>
+        /// Gets the competition factor for a given floor.
+        /// </summary>
+        /// <param name="floor">The floor number to evaluate.</param>
+        /// <returns>Competition factor</returns>
 		private double GetCompetitionFactor(int floor)
 		{
 			int nearbyElevators = _elevators.Count(e => Math.Abs(e.CurrentFloor - floor) <= Constant.ProximityFactor);
@@ -221,6 +304,12 @@ namespace EventChallenge.Services
 			return competitionFactor;
 		}
 
+		/// <summary>
+        /// Sends an elevator to a specified floor.
+        /// </summary>
+        /// <param name="elevator">The elevator to manage.</param>
+        /// <param name="bestFloor">The floor number to send the elevator to.</param>
+        /// <returns>Task</returns>
 		private async Task SendElevator(Elevator elevator, int bestFloor)
 		{
 			elevator.CurrentDirection = _getDirection(elevator, bestFloor);
@@ -228,6 +317,12 @@ namespace EventChallenge.Services
 			await _simulateMovement(elevator, bestFloor);
 		}
 
+		/// <summary>
+        /// Determines the direction for an elevator to move.
+        /// </summary>
+        /// <param name="elevator">The elevator to manage.</param>
+        /// <param name="bestFloor">The floor number to evaluate.</param>
+        /// <returns>Direction</returns>
 		private Elevator.Direction _getDirection(Elevator elevator, int bestFloor)
 		{
 			if (elevator.CurrentFloor < bestFloor)
@@ -244,6 +339,12 @@ namespace EventChallenge.Services
 			}
 		}
 
+		/// <summary>
+        /// Simulates the movement of an elevator to a specified floor.
+        /// </summary>
+        /// <param name="elevator">The elevator to manage.</param>
+        /// <param name="bestFloor">The floor number to move to.</param>
+        /// <returns>Task</returns>
 		private async Task _simulateMovement(Elevator elevator, int bestFloor)
 		{
 			int endFloor = 0;
@@ -277,6 +378,11 @@ namespace EventChallenge.Services
 			await DispatchElevatorToFloorWithLongestWaitingPassenger(elevator, endFloor);
 		}
 
+		/// <summary>
+        /// Notifies subscribers about the status change of an elevator.
+        /// </summary>
+        /// <param name="elevator">The elevator to manage.</param>
+        /// <returns>void</returns>
 		private void NotifyElevatorStatusChange(Elevator elevator)
 		{
 			_elevatorStatusSubject.OnNext(new ElevatorEventArgs()
@@ -287,6 +393,11 @@ namespace EventChallenge.Services
 			});
 		}
 
+		/// <summary>
+        /// Handles the arrival of an elevator at a floor.
+        /// </summary>
+        /// <param name="elevator">The elevator to manage.</param>
+        /// <returns>void</returns>
 		private void _handleArrival(Elevator elevator)
 		{
 			
@@ -346,6 +457,12 @@ namespace EventChallenge.Services
 			}
 		}
 
+		/// <summary>
+        /// Dispatches an elevator to the floor with the longest waiting passenger.
+        /// </summary>
+        /// <param name="elevator">The elevator to manage.</param>
+        /// <param name="floor">The floor number to evaluate.</param>
+        /// <returns>Task</returns>
 		private async Task DispatchElevatorToFloorWithLongestWaitingPassenger(Elevator elevator, int floor)
 		{
 			if (elevator.Passengers.Any())
@@ -354,6 +471,13 @@ namespace EventChallenge.Services
 			}
 		}
 
+		/// <summary>
+        /// Notifies subscribers about the status change of passengers.
+        /// </summary>
+        /// <param name="elevator">The elevator to manage.</param>
+        /// <param name="passengerStatus">The new status of the passengers.</param>
+        /// <param name="passengersCount">The number of passengers affected.</param>
+        /// <returns>void</returns>
 		private void NotifyPassengerStatusChange(Elevator elevator, PassengerEventArgs.Status passengerStatus, int passengersCount)
 		{
 			_passengerStatusSubject.OnNext(new PassengerEventArgs()
@@ -365,6 +489,11 @@ namespace EventChallenge.Services
 			});
 		}
 
+		/// <summary>
+        /// Determines the direction for an elevator based on its passengers' destinations.
+        /// </summary>
+        /// <param name="elevator">The elevator to manage.</param>
+        /// <returns>Direction</returns>
 		private Elevator.Direction DetermineDirection(Elevator elevator)
 		{
 			if (elevator.Passengers.Any())
@@ -390,6 +519,11 @@ namespace EventChallenge.Services
 			return Direction.None;
 		}
 
+		/// <summary>
+		/// Adds a passenger to the queue for a given floor.
+		/// </summary>
+		/// <param name="floor"></param>
+		/// <param name="passengerDto"></param>
 		public void AddPassengerToQueue(int floor, PassengerDTO passengerDto)
         {
             lock (_lock)
