@@ -1,10 +1,10 @@
-﻿namespace ElevatorChallenge
+﻿using Autofac;
+using ElevatorChallenge;
+
+
+var container = ContainerConfig.Configure();
+using(var scope = container.BeginLifetimeScope())
 {
-	internal class Program
-	{
-		static void Main(string[] args)
-		{
-			
-		}
-	}
+	var app = scope.Resolve<ElevatorSimulation>();
+	app.Run();
 }
