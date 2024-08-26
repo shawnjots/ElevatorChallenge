@@ -546,6 +546,10 @@ namespace EventChallenge.Services
                 });
             }
         }
+		public ConcurrentDictionary<int, Floor> GetFloors()
+		{
+			return _floors;
+		}
 
 }
 }
