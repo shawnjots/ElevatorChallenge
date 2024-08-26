@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventChallenge.Services", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ElevatorChallenge.Util", "ElevatorChallenge.Util\ElevatorChallenge.Util.csproj", "{E88F693E-242C-465D-A639-93035DE60461}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElevatorChallenge", "ElevatorChallenge\ElevatorChallenge.csproj", "{94627163-9AFC-47DB-900D-8F5F9C0BED18}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ElevatorChallenge", "ElevatorChallenge\ElevatorChallenge.csproj", "{94627163-9AFC-47DB-900D-8F5F9C0BED18}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElevatorChallenge.UnitTests", "ElevatorChallenge.UnitTests\ElevatorChallenge.UnitTests.csproj", "{FEF2E628-00B6-4540-A0D6-1E742FCA65F4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{94627163-9AFC-47DB-900D-8F5F9C0BED18}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{94627163-9AFC-47DB-900D-8F5F9C0BED18}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{94627163-9AFC-47DB-900D-8F5F9C0BED18}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEF2E628-00B6-4540-A0D6-1E742FCA65F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEF2E628-00B6-4540-A0D6-1E742FCA65F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEF2E628-00B6-4540-A0D6-1E742FCA65F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEF2E628-00B6-4540-A0D6-1E742FCA65F4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
